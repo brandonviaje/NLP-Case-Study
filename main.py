@@ -1,26 +1,20 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
 import torch
 from transformers import DistilBertTokenizer
 from model.distilbert_model import MyDistilBERT
+import gradio as gr
 
 model = MyDistilBERT()
 state_dict = torch.load("model/distilbert_state_dict.pth", map_location="cpu")
 model.model.load_state_dict(state_dict)
 model.eval()
 
+# Load tokenizer
 tokenizer = DistilBertTokenizer.from_pretrained("distilbert-base-uncased")
 
-app = FastAPI()
-
-class TextRequest(BaseModel):
-    text: str
-
-@app.post("/predict")
-def predict(request: TextRequest):
+def predict(text):
     # Tokenize
     inputs = tokenizer(
-        request.text, 
+        text, 
         return_tensors="pt", 
         truncation=True, 
         padding="max_length", 
@@ -29,8 +23,23 @@ def predict(request: TextRequest):
 
     # Forward pass
     with torch.no_grad():
-        logits = model(inputs["input_ids"], inputs["attention_mask"])
+        logits = model(**inputs).logits
 
-    pred = torch.argmax(logits, dim=1).item()
-    label_map = {0: "negative", 1: "positive"}
-    return {"prediction": label_map[pred]}
+    probs = torch.softmax(logits, dim=1)
+    positive = float(probs[0][1])
+    negative = float(probs[0][0])
+    
+    return {
+        "Positive": positive,
+        "Negative": negative
+    }
+
+iface = gr.Interface(
+    fn=predict,
+    inputs=gr.Textbox(label="Enter text"),
+    outputs=gr.Label(label="Sentiment"),
+    title="Sentiment Analysis",
+    description="Your custom fine-tuned DistilBERT sentiment model"
+)
+
+iface.launch()
