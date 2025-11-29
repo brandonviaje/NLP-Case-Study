@@ -1,0 +1,6 @@
+torch
+lightning.pytorch
+transformers
+fastapi
+uvicorn
+git-lfs
