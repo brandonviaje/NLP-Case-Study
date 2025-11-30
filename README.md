@@ -48,7 +48,7 @@ Source: [IMDB Dataset](https://www.kaggle.com/datasets/lakshmi25npathi/imdb-data
 
 ```bash
 git clone https://github.com/ethan-warriner/Sentiment-Analysis-API.git
-cd Sentiment-Analysis
+cd Sentiment-Analysis-API
 ```
 ---
 
