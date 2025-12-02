@@ -52,6 +52,16 @@ cd Sentiment-Analysis-API
 ```
 ---
 
+## Demo
+
+To access the deployed model, visit:
+
+[Sentiment-Analysis-API](https://huggingface.co/spaces/EthanWar/sentiment-analysis)
+
+If the page is inactive, just click "Restart this page", and the interface will build.
+
+---
+
 ### Tools & Libraries
 
 <table>
